@@ -18,7 +18,7 @@ AddGridData <- function(gridData,dataFrame,columnName,longName="Longitude",latNa
   
   # Get the longitude and latitude of the top left of the grid 
   long.left<-bbox(gridData)[1,1]
-  lat.bottom<-bbox(gridData)[2,1]
+  lat.top<-bbox(gridData)[2,2]
   
   # Get the numbers of cells in each dimension of the grid
   ncols<-slot(slot(gridData,"grid"),"cells.dim")[1]
@@ -27,12 +27,10 @@ AddGridData <- function(gridData,dataFrame,columnName,longName="Longitude",latNa
   # Make a matrix containing the grid data
   gridData.matrix<-matrix(gridData$band1,nrow=nrows,ncol=ncols,byrow=T)
   
-  image(gridData.matrix)
-  
   cat("Finding matching cells\n")
   
   long.cells <- ceiling((dataFrame[,longName] - long.left) / cell.size.x)
-  lat.cells <- floor((dataFrame[,latName] - lat.bottom) / cell.size.y)
+  lat.cells <- ceiling((lat.top - dataFrame[,latName]) / cell.size.y)
   
   cat("Warning: ",length(union(which(long.cells<=0),union(which(lat.cells<=0),
                                union(which(long.cells>ncols),which(lat.cells>nrows))))),
